@@ -4,11 +4,6 @@ pragma solidity ^0.8.13;
 import {PBTSimple} from "@chiru-pbt/PBTSimple.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
-error MintNotOpen();
-error TotalSupplyReached();
-error CannotUpdateDeadline();
-error CannotMakeChanges();
-
 contract BoundNFT is PBTSimple, Ownable {
     uint256 public supply;
     bool public canMint;
@@ -17,11 +12,7 @@ contract BoundNFT is PBTSimple, Ownable {
 
     constructor(string memory name_, string memory symbol_) PBTSimple(name_, symbol_) {}
 
-    function mintSkateboard(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) external {
-        if (!canMint) {
-            revert MintNotOpen();
-        }
-
+    function mintPbt(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) external {
         _mintTokenWithChip(signatureFromChip, blockNumberUsedInSig);
         unchecked {
             ++supply;
@@ -41,10 +32,6 @@ contract BoundNFT is PBTSimple, Ownable {
 
     function updateChips(address[] calldata chipAddressesOld, address[] calldata chipAddressesNew) external onlyOwner {
         _updateChips(chipAddressesOld, chipAddressesNew);
-    }
-
-    function openMint() external onlyOwner {
-        canMint = true;
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
